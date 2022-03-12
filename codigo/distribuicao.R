@@ -14,8 +14,3 @@ View(table)
 print(table)
 
 dev.off()
-
-# Subtrair data_obito por inicio_sintoma
-# Media de dias de permanencia por tipo_hosp
-# Gráfico de Barras
-# https://pt.stackoverflow.com/questions/308496/no-r-como-calcular-a-m%C3%A9dia-de-uma-coluna-baseado-em-outra
