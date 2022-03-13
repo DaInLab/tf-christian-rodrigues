@@ -1,3 +1,4 @@
+#distribuição de acordo com a idade dos pacientes
 library(readxl)
 
 worksheet <- read_excel("./dados/covid_19_bauru_mortes.xlsx")

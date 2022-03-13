@@ -1,4 +1,4 @@
-#- relação entre óbitos ocorridos e a vacinação dos falecidos.
+#relação entre óbitos ocorridos e a vacinação dos falecidos.
 library(readxl)
 library(dplyr)
 

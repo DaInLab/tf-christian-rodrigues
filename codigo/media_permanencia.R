@@ -1,3 +1,4 @@
+#tipos e tempo de permanência hospitalar
 library(readxl)
 library(dplyr)
 
@@ -51,7 +52,7 @@ names(dados) <- c("Público", "Privado")
 
 png(filename = "./graficos/grafico-permanencia.png", width = 700, height = 600)
 barplot(as.vector(dados), main="Média de dias de permanência por tipo de hospedagem", 
-        xlab="Tipos de Hospedagem", ylab="Quantidade Média", 
+        xlab="Tipos de Hospedagem", ylab="Quantidade Média de Óbitos", 
         names.arg = c ("Público", "Privado"), ylim=c(0, 25), 
         cex.names = 1, xaxs = "i", col=rainbow(2))
 
