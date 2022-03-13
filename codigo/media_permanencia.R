@@ -50,7 +50,7 @@ paste("Média de dias de permanência em Hospedagem Privada: ", media_pv)
 dados <- c(media_pb, media_pv)
 names(dados) <- c("Público", "Privado")
 
-png(filename = "./graficos/grafico-permanencia.png", width = 700, height = 600)
+png(filename = "./graficos/figura2.png", width = 700, height = 600)
 barplot(as.vector(dados), main="Média de dias de permanência por tipo de hospedagem", 
         xlab="Tipos de Hospedagem", ylab="Quantidade Média de Óbitos", 
         names.arg = c ("Público", "Privado"), ylim=c(0, 25), 

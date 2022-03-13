@@ -18,7 +18,7 @@ dados <- as.numeric(c(total_obito[2], total_nao_vacinados, total_true[2]))
 
 names(dados) <- c("Total de Óbitos", "Total de Óbitos Não Vacinados", "Total de Óbitos Vacidos")
 
-png(filename = "./graficos/quantidade-obitos.png", width = 900, height = 500)
+png(filename = "./graficos/figura3.png", width = 900, height = 500)
 barplot(as.vector(dados), main="Quantidade de Óbitos, parâmentro de vacinados e não vacinados", 
         ylab="Taxas", ylim=c(0, 1200), cex.names = 1, 
         names.arg = c("Total de Óbitos", "Total de Óbitos Não Vacinados", "Total de Óbitos Vacidos"),

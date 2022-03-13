@@ -24,12 +24,12 @@ cronica <- length(na.omit(str_match(cmb, "crônica")))
 dados <- c(qtde_comorbidades, asma, obesidade, cardiopatia, diabetes, pneumonia,
            hipertensao, cancer, avc, cardiovascular, cronica)
 
-png(filename = "./graficos/comorbidades.png", width = 1000, height = 600)
+png(filename = "./graficos/figura4.png", width = 1000, height = 600)
 barplot(as.vector(dados), main="Características das Comorbidades dos Óbitos", 
         ylab="Quantidade de Óbitos", ylim=c(0, 1000), cex.names = 1, 
         names.arg = c("Total", "Asma", "Obesidade", 
                       "Cardiopatia", "Diabetes", "Pneumonia", "Hipertensão",
-                      "Câncer", "AVC", "Cardiovascular", "Crônica"),
+                      "Câncer", "AVC", "Cardiovascular", "Crônicas"),
         xaxs = "i", col=rainbow(12))
 
 dev.off()
