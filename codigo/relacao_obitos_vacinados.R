@@ -14,10 +14,6 @@ total_true <- count(doses_true, "doses_vacina")
 
 total_nao_vacinados <- total_obito[2] - total_true[2]
 
-total_obito[2]
-total_nao_vacinados
-total_true[2]
-
 dados <- as.numeric(c(total_obito[2], total_nao_vacinados, total_true[2]))
 
 names(dados) <- c("Total de Óbitos", "Total de Óbitos Não Vacinados", "Total de Óbitos Vacidos")

@@ -13,4 +13,8 @@ table <- table %>%
 View(table)
 print(table)
 
+png(filename = "./graficos/histograma-idade.png")
+hist(data, main = "Distribuição de Frequência das Idades", 
+     xlab = "Idades", ylab= "Frequências", col=rainbow(1))
+
 dev.off()
