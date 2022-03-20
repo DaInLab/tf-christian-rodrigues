@@ -1,6 +1,6 @@
 #distribuição de acordo com a idade dos pacientes
 library(readxl)
-
+library(tidyverse)
 worksheet <- read_excel("./dados/covid_19_bauru_mortes.xlsx")
 
 data <- worksheet$'idade'

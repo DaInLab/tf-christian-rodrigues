@@ -1,0 +1,194 @@
+---
+title: 'Casos de Covid-19 em Bauru-SP: Trabalho Final'
+author: "Christian Rodrigues Batista"
+date: "13/03/2022"
+output:
+  word_document: default
+  pdf_document: default
+---
+
+## 1. Visão Geral
+
+Este relatório representa a análise inicial e exploratória sobre como a pandemia de Coronavirus (Covid-19) afeta a cidade de Bauru - São Paulo, Brasil. 
+
+Devido a relevância que possui na região Centro Oeste de São Paulo, a cidade de Bauru foi a escolhida para o desenvolvimento deste relatório de pesquisa em Data Science sobre o impacto da pandemia do novo Coronavirus (Covid-19).
+
+Os dados coletados foram publicados no jornal local usando dados do sistema municipal de saúde.
+
+## 2. Análise Exploratória dos Dados
+
+Na figura 1 geramos uma tabela e um histograma para observar a frequencia de idades das pessoas que foram a óbito devido ao vírus.
+
+```{r distribuicao, echo=FALSE}
+#distribuição de acordo com a idade dos pacientes
+library(readxl)
+library(tidyverse)
+worksheet <- read_excel("../dados/covid_19_bauru_mortes.xlsx")
+
+data <- worksheet$'idade'
+
+table <- data.frame(t(table(data)))[,-1]
+table$data <- as.numeric(levels(table$data))
+table <- table %>% 
+  mutate(Fr = 100*Freq/sum(Freq),
+         Fac = cumsum(Freq),
+         Xi.Fi = data*Freq)
+
+#png(filename = "../graficos/figura1.png")
+hist(data, main = "Distribuição de Frequência das Idades", 
+     xlab = "Idades", ylab= "Frequências", col=rainbow(1))
+#dev.off()
+```
+
+Já na figura 2, apresentamos um grafico de barras que contem as médias aritméticas de dias que correspondem a permanencia hospitalar em seus dois tipos de hospedagem, pública e privada, visando que as data que correspondem o périodo de permanencia são a data de inicio dos sintomas e data de óbito. 
+
+```{r media_permanencia, echo=FALSE}
+#tipos e tempo de permanência hospitalar
+library(readxl)
+library(dplyr)
+
+worksheet <- read_excel("../dados/covid_19_bauru_mortes.xlsx")
+
+data_tp_privado <- worksheet %>% filter(tipo_hosp=="privado")
+data_tp_publico <- worksheet %>% filter(tipo_hosp=="público")
+
+entrada_pv <- data_tp_privado$'inicio_sintoma'
+obito_pv <- data_tp_privado$'data_obito'
+
+entrada_pb <- data_tp_publico$'inicio_sintoma'
+obito_pb <- data_tp_publico$'data_obito'
+
+#Função para substituir negativos por zero
+neg2zero <- function(x) {
+  x[x < 0] <- 0
+  x
+}
+
+#Diferencia de dias e média do tipo de hospedagem PUBLICA
+diff_dias_pb <- difftime(as.Date(obito_pb), as.Date(entrada_pb), units = "days")
+
+dias_pb <- na.omit(diff_dias_pb)
+
+dados_pb <- c(neg2zero(dias_pb))
+
+media_pb <- mean(dados_pb)
+
+#Diferencia de dias e média do tipo de hospedagem PRIVADA
+diff_dias_pv <- difftime(as.Date(obito_pv), as.Date(entrada_pv), units = "days")
+
+dias_pv <- na.omit(diff_dias_pv)
+
+dados_pv <- c(neg2zero(dias_pv))
+
+media_pv <- mean(dados_pv)
+
+#Printing
+paste("Dados da Hospedagem Pública (Dias de Permanênica)")
+dados_pb
+paste("Dados da Hospedagem Privada (Dias de Permanênica)")
+dados_pv
+
+paste("Média de dias de permanência em Hospedagem Pública: ", media_pb)
+paste("Média de dias de permanência em Hospedagem Privada: ", media_pv)
+
+#Graphics
+dados <- c(media_pb, media_pv)
+names(dados) <- c("Público", "Privado")
+
+#png(filename = "../graficos/figura2.png", width = 700, height = 600)
+barplot(as.vector(dados), main="Média de dias de permanência por tipo de hospedagem", 
+        xlab="Tipos de Hospedagem", ylab="Quantidade Média de Óbitos", 
+        names.arg = c ("Público", "Privado"), ylim=c(0, 25), 
+        cex.names = 1, xaxs = "i", col=rainbow(2))
+#dev.off()
+```
+
+Na figura 3, temos como escolha um gráfico de barras comparativo, nele é apresentado um numero total de óbitos no periodo de 2020 a 2022, segundo os boletins emitidos pela prefeitura da cidade, e outras duas barras, que apresentam a quantidade de óbitos de pessoas não vacinadas e pessoas vacinadas.
+
+```{r relacao_obitos_vacinados, echo=FALSE}
+#relação entre óbitos ocorridos e a vacinação dos falecidos.
+library(readxl)
+library(dplyr)
+
+worksheet <- read_excel("../dados/covid_19_bauru_mortes.xlsx")
+
+doses_vacina <- worksheet$'doses_vacina'
+
+doses_true <- worksheet %>% filter(doses_vacina=='TRUE')
+
+total_obito <- count(worksheet, "doses_vacina")
+
+doses_true <- worksheet %>% filter(doses_vacina=='TRUE')
+
+total_obito <- count(worksheet, "doses_vacina")
+
+total_true <- count(doses_true, "doses_vacina")
+
+total_nao_vacinados <- total_obito[2] - total_true[2]
+
+dados <- as.numeric(c(total_obito[2], total_nao_vacinados, total_true[2]))
+
+names(dados) <- c("Total de Óbitos", "Total de Óbitos Não Vacinados", "Total de Óbitos Vacidos")
+
+#png(filename = "../graficos/figura3.png", width = 900, height = 500)
+barplot(as.vector(dados), main="Quantidade de Óbitos, parâmentro de vacinados e não vacinados", 
+        ylab="Taxas", ylim=c(0, 1200), cex.names = 1, 
+        names.arg = c("Total de Óbitos", "Total de Óbitos Não Vacinados", "Total de Óbitos Vacidos"),
+        xaxs = "i", col=rainbow(3))
+#dev.off()
+```
+
+Já na figura 4, temos uma relação das caracteristicas das comorbidades que podem ter complicado o quadro clinico dos paciêntes que contrairam o Covid19. Em um gráfico de barras podemos ter o paramentro do total de pessoas que possuia algum tipo de comorbidades, e ao lado as colunas que apresentam a quantiadade de pessoas que contiam algum tipo de comorbidade separadas nas seguintes categorias escolhidas: Asma, Obesidade, Cardiopatia, Diabetes, Pneumonia, Hipertensão, Câncer, AVC, Problemas Cardiovascular e Doenças Crônicas. É importante notar que o mesmo paciênte pode ou não conter mais de uma comorbidade de forma simultânea.
+
+```{r comorbidades, echo=FALSE}
+#verificar quais as características das comorbidades dos óbitos
+library(readxl)
+library(stringr)
+library(dplyr)
+
+worksheet <- read_excel("../dados/covid_19_bauru_mortes.xlsx")
+
+comorbidades <- c(worksheet$'comorbidade')
+
+cmb <- na.omit(comorbidades)
+
+qtde_comorbidades <- length(cmb)
+asma <- length(na.omit(str_match(cmb, "asma")))
+obesidade <- length(na.omit(str_match(cmb, "obesidade")))
+cardiopatia <- length(na.omit(str_match(cmb, "cardiopatia")))
+diabetes <- length(na.omit(str_match(cmb, "diabetes")))
+pneumonia <- length(na.omit(str_match(cmb, "pneumonia")))
+hipertensao <- length(na.omit(str_match(cmb, "hipertensão")))
+cancer <- length(na.omit(str_match(cmb, "câncer")))
+avc <- length(na.omit(str_match(cmb, "AVC")))
+cardiovascular <- length(na.omit(str_match(cmb, "cardiovascular")))
+cronica <- length(na.omit(str_match(cmb, "crônica")))
+
+dados <- c(qtde_comorbidades, asma, obesidade, cardiopatia, diabetes, pneumonia,
+           hipertensao, cancer, avc, cardiovascular, cronica)
+
+#png(filename = "../graficos/figura4.png", width = 1000, height = 600)
+barplot(as.vector(dados), main="Características das Comorbidades dos Óbitos", 
+        ylab="Quantidade de Óbitos", ylim=c(0, 1000), cex.names = 1, 
+        names.arg = c("Total", "Asma", "Obesidade", 
+                      "Cardiopatia", "Diabetes", "Pneumonia", "Hipertensão",
+                      "Câncer", "AVC", "Cardiovascular", "Crônicas"),
+        xaxs = "i", col=rainbow(12))
+#dev.off()
+```
+
+Na última imagem, figura 5, apresentamos avanço dos óbitos de paciência que contrairam o novo coronavírus nos períodos mais críticos da pandemia, de 2020 a 2022.
+
+``` {r variacao_periodica, echo=FALSE}
+# variação periódica de tais óbitos;
+library(readxl)
+
+worksheet <- read_excel("../dados/covid_19_bauru_mortes.xlsx")
+
+data <- worksheet$'data_obito'
+
+#png(filename = "../graficos/figura5.png")
+plot(data, main = "Variação Periódica de óbitos", 
+     xlab = "Óbitos ocorridos", ylab = "Período/datas")
+#dev.off()
+```
